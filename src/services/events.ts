@@ -1,4 +1,4 @@
-import type { EventResponseDTO } from 'schemas';
+import type { EventResponseDTO } from '../../schemas';
 import apiClient from '../lib/api-client';
 
 export const eventService = {
