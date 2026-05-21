@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus, Edit2, Trash2, Tag } from 'lucide-react';
 import { eventTypeService, type EventType } from '@/services/event-types';
 import { EventTypeForm } from '@/components/admin/forms/EventTypeForm';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import type { EventTypeInputDTO } from '../../../schemas';
 
@@ -26,6 +27,7 @@ export default function AdminEventTypes() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingType, setEditingType] = useState<EventType | null>(null);
+  const [typeToDelete, setTypeToDelete] = useState<string | null>(null);
 
   const { data: types = [], isLoading } = useQuery({
     queryKey: ['event-types'],
@@ -39,7 +41,10 @@ export default function AdminEventTypes() {
       setIsDialogOpen(false);
       toast.success('Тип события создан');
     },
-    onError: () => toast.error('Ошибка при создании типа события'),
+    onError: (err) => {
+      console.error(err);
+      toast.error('Ошибка при создании типа события');
+    },
   });
 
   const updateMutation = useMutation({
@@ -51,7 +56,10 @@ export default function AdminEventTypes() {
       setEditingType(null);
       toast.success('Тип события обновлен');
     },
-    onError: () => toast.error('Ошибка при обновлении типа события'),
+    onError: (err) => {
+      console.error(err);
+      toast.error('Ошибка при обновлении типа события');
+    },
   });
 
   const deleteMutation = useMutation({
@@ -60,7 +68,10 @@ export default function AdminEventTypes() {
       queryClient.invalidateQueries({ queryKey: ['event-types'] });
       toast.success('Тип события удален');
     },
-    onError: () => toast.error('Ошибка при удалении типа события'),
+    onError: (err) => {
+      console.error(err);
+      toast.error('Ошибка при удалении типа события');
+    },
   });
 
   const handleEdit = (type: EventType) => {
@@ -74,8 +85,13 @@ export default function AdminEventTypes() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Вы уверены, что хотите удалить этот тип события?')) {
-      deleteMutation.mutate(id);
+    setTypeToDelete(id);
+  };
+
+  const confirmDelete = () => {
+    if (typeToDelete) {
+      deleteMutation.mutate(typeToDelete);
+      setTypeToDelete(null);
     }
   };
 
@@ -91,22 +107,28 @@ export default function AdminEventTypes() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-gray-900">
+          <h2 className="text-3xl font-black tracking-tight text-foreground">
             Типы событий
           </h2>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Категории и цветовое кодирование для календаря.
           </p>
         </div>
         <Button
           onClick={handleAdd}
-          className="gap-2 rounded-xl font-bold shadow-xl shadow-blue-100"
+          className="gap-2 rounded-xl font-bold shadow-xl shadow-primary/20"
         >
           <Plus className="h-4 w-4" /> Добавить тип
         </Button>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) setEditingType(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -123,9 +145,9 @@ export default function AdminEventTypes() {
         </DialogContent>
       </Dialog>
 
-      <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
         <Table>
-          <TableHeader className="bg-gray-50/50">
+          <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="w-10"></TableHead>
               <TableHead className="text-xs font-bold tracking-wider uppercase">
@@ -156,10 +178,10 @@ export default function AdminEventTypes() {
               types.map((type) => (
                 <TableRow
                   key={type.id}
-                  className="transition-colors hover:bg-gray-50/50"
+                  className="transition-colors hover:bg-muted/50"
                 >
                   <TableCell>
-                    <Tag className="h-4 w-4 text-gray-400" />
+                    <Tag className="h-4 w-4 text-muted-foreground" />
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -176,7 +198,7 @@ export default function AdminEventTypes() {
                         className="h-4 w-4 rounded-full shadow-sm"
                         style={{ backgroundColor: type.color }}
                       />
-                      <code className="text-xs text-gray-400 uppercase">
+                      <code className="text-xs text-muted-foreground uppercase">
                         {type.color}
                       </code>
                     </div>
@@ -187,7 +209,7 @@ export default function AdminEventTypes() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEdit(type)}
-                        className="h-8 w-8 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                        className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
                       </Button>
@@ -195,7 +217,7 @@ export default function AdminEventTypes() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(type.id)}
-                        className="h-8 w-8 rounded-lg hover:bg-red-50 hover:text-red-600"
+                        className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -207,6 +229,14 @@ export default function AdminEventTypes() {
           </TableBody>
         </Table>
       </div>
+
+      <ConfirmDialog
+        open={!!typeToDelete}
+        onOpenChange={(open) => !open && setTypeToDelete(null)}
+        title="Удалить тип события?"
+        onConfirm={confirmDelete}
+        isPending={deleteMutation.isPending}
+      />
     </div>
   );
 }

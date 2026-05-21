@@ -1,46 +1,53 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useSession, authClient } from '../../lib/auth-client';
+import { ThemeToggle } from './theme-toggle';
 
 export function Header() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: session, isPending } = useSession();
 
+  const handleSignOut = () => {
+    authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          queryClient.clear();
+          navigate({ to: '/' });
+        },
+      },
+    });
+  };
+
   return (
-    <header className="flex h-16 items-center justify-between border-b bg-white px-6 shadow-sm">
+    <header className="bg-background flex h-16 items-center justify-between border-b px-6 shadow-sm">
       <div className="flex items-center gap-8">
-        <Link to="/" className="text-xl font-bold tracking-tight text-blue-600">
+        <Link to="/" className="text-primary text-xl font-bold tracking-tight">
           AOW Календарь
         </Link>
-        <nav className="hidden items-center gap-6 text-sm font-medium text-gray-600 md:flex">
-          {session && (
-            <Link
-              to="/admin"
-              className="hover:text-blue-600 [&.active]:font-bold [&.active]:text-blue-600"
-            >
-              Админ-панель
-            </Link>
-          )}
-        </nav>
+        <ThemeToggle />
       </div>
-
+      <nav className="text-muted-foreground hidden items-center gap-6 text-sm font-medium md:flex">
+        {session && (
+          <Link
+            to="/admin"
+            className="hover:text-primary [&.active]:text-primary [&.active]:font-bold"
+          >
+            Админ-панель
+          </Link>
+        )}
+      </nav>
       <div>
         {isPending ? (
-          <div className="h-8 w-20 animate-pulse rounded bg-gray-100" />
+          <div className="bg-muted h-8 w-20 animate-pulse rounded" />
         ) : session ? (
           <div className="flex items-center gap-4">
-            <span className="hidden text-sm font-medium text-gray-700 sm:inline">
+            <span className="text-foreground hidden text-sm font-medium sm:inline">
               {session.user.name}
             </span>
             <button
-              onClick={() =>
-                authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      window.location.href = '/';
-                    },
-                  },
-                })
-              }
-              className="rounded-lg border px-3 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-50"
+              onClick={handleSignOut}
+              className="text-muted-foreground hover:bg-muted rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors"
             >
               Выйти
             </button>
@@ -48,7 +55,7 @@ export function Header() {
         ) : (
           <Link
             to="/admin/login"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-md shadow-blue-100 transition-all hover:bg-blue-700"
+            className="bg-primary text-primary-foreground shadow-primary/20 hover:bg-primary/90 rounded-lg px-4 py-2 text-sm font-bold shadow-md transition-all"
           >
             Войти
           </Link>

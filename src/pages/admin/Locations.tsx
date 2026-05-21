@@ -18,6 +18,7 @@ import {
 import { Plus, Edit2, Trash2, MapPin } from 'lucide-react';
 import { locationService, type Location } from '@/services/locations';
 import { LocationForm } from '@/components/admin/forms/LocationForm';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import type { LocationInputDTO } from '../../../schemas';
 
@@ -25,6 +26,7 @@ export default function AdminLocations() {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Location | null>(null);
+  const [locationToDelete, setLocationToDelete] = useState<string | null>(null);
 
   const { data: locations = [], isLoading } = useQuery({
     queryKey: ['locations'],
@@ -38,7 +40,10 @@ export default function AdminLocations() {
       setIsDialogOpen(false);
       toast.success('Площадка создана');
     },
-    onError: () => toast.error('Ошибка при создании площадки'),
+    onError: (err) => {
+      console.error(err);
+      toast.error('Ошибка при создании площадки');
+    },
   });
 
   const updateMutation = useMutation({
@@ -50,7 +55,10 @@ export default function AdminLocations() {
       setEditingLocation(null);
       toast.success('Площадка обновлена');
     },
-    onError: () => toast.error('Ошибка при обновлении площадки'),
+    onError: (err) => {
+      console.error(err);
+      toast.error('Ошибка при обновлении площадки');
+    },
   });
 
   const deleteMutation = useMutation({
@@ -59,7 +67,10 @@ export default function AdminLocations() {
       queryClient.invalidateQueries({ queryKey: ['locations'] });
       toast.success('Площадка удалена');
     },
-    onError: () => toast.error('Ошибка при удалении площадки'),
+    onError: (err) => {
+      console.error(err);
+      toast.error('Ошибка при удалении площадки');
+    },
   });
 
   const handleEdit = (location: Location) => {
@@ -73,8 +84,13 @@ export default function AdminLocations() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту площадку?')) {
-      deleteMutation.mutate(id);
+    setLocationToDelete(id);
+  };
+
+  const confirmDelete = () => {
+    if (locationToDelete) {
+      deleteMutation.mutate(locationToDelete);
+      setLocationToDelete(null);
     }
   };
 
@@ -90,22 +106,28 @@ export default function AdminLocations() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-gray-900">
+          <h2 className="text-3xl font-black tracking-tight text-foreground">
             Площадки
           </h2>
-          <p className="text-gray-500">
+          <p className="text-muted-foreground">
             Список всех доступных локаций для проведения мероприятий.
           </p>
         </div>
         <Button
           onClick={handleAdd}
-          className="gap-2 rounded-xl font-bold shadow-xl shadow-blue-100"
+          className="gap-2 rounded-xl font-bold shadow-xl shadow-primary/20"
         >
           <Plus className="h-4 w-4" /> Добавить площадку
         </Button>
       </div>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) setEditingLocation(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -120,9 +142,9 @@ export default function AdminLocations() {
         </DialogContent>
       </Dialog>
 
-      <div className="overflow-hidden rounded-2xl border bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
         <Table>
-          <TableHeader className="bg-gray-50/50">
+          <TableHeader className="bg-muted/50">
             <TableRow>
               <TableHead className="w-10"></TableHead>
               <TableHead className="text-xs font-bold tracking-wider uppercase">
@@ -153,15 +175,15 @@ export default function AdminLocations() {
               locations.map((location) => (
                 <TableRow
                   key={location.id}
-                  className="transition-colors hover:bg-gray-50/50"
+                  className="transition-colors hover:bg-muted/50"
                 >
                   <TableCell>
-                    <MapPin className="h-4 w-4 text-blue-500" />
+                    <MapPin className="h-4 w-4 text-primary" />
                   </TableCell>
-                  <TableCell className="font-bold text-gray-900">
+                  <TableCell className="font-bold text-foreground">
                     {location.name}
                   </TableCell>
-                  <TableCell className="text-gray-500">
+                  <TableCell className="text-muted-foreground">
                     {location.address}
                   </TableCell>
                   <TableCell className="text-right">
@@ -170,7 +192,7 @@ export default function AdminLocations() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEdit(location)}
-                        className="h-8 w-8 rounded-lg hover:bg-blue-50 hover:text-blue-600"
+                        className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
                       </Button>
@@ -178,7 +200,7 @@ export default function AdminLocations() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(location.id)}
-                        className="h-8 w-8 rounded-lg hover:bg-red-50 hover:text-red-600"
+                        className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -190,6 +212,14 @@ export default function AdminLocations() {
           </TableBody>
         </Table>
       </div>
+
+      <ConfirmDialog
+        open={!!locationToDelete}
+        onOpenChange={(open) => !open && setLocationToDelete(null)}
+        title="Удалить площадку?"
+        onConfirm={confirmDelete}
+        isPending={deleteMutation.isPending}
+      />
     </div>
   );
 }

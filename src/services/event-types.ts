@@ -2,6 +2,11 @@ import apiClient from '../lib/api-client';
 import type { EventTypeInputDTO, EventTypeResponseDTO } from '../../schemas';
 
 export const eventTypeService = {
+  getPublicAll: async () => {
+    const { data } =
+      await apiClient.get<EventTypeResponseDTO[]>('/event-types');
+    return data;
+  },
   getAll: async () => {
     const { data } =
       await apiClient.get<EventTypeResponseDTO[]>('/admin/event-types');

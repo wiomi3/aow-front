@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL + '/api' || '/api',
+  baseURL: (import.meta.env.VITE_API_URL ?? '') + '/api',
   headers: {
     'Content-Type': 'application/json',
   },

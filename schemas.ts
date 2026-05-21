@@ -129,5 +129,24 @@ export const eventResponseSchema = z.object({
   employees: z.array(employeeResponseSchema).optional(),
 });
 
+export const employeeWithDetailsResponseSchema = employeeResponseSchema.extend({
+  employeeType: employeeTypeResponseSchema,
+});
+
+export type EmployeeWithDetailsResponseDTO = z.infer<
+  typeof employeeWithDetailsResponseSchema
+>;
+
+export const eventWithDetailsResponseSchema = eventResponseSchema.extend({
+  type: eventTypeResponseSchema,
+  location: locationResponseSchema.nullable(),
+  employees: z.array(employeeWithDetailsResponseSchema),
+});
+export type EventWithDetailsResponseDTO = z.infer<
+  typeof eventWithDetailsResponseSchema
+>;
+export const EventWithDetailsSchema = eventWithDetailsResponseSchema;
+export type EventWithDetailsType = z.infer<typeof EventWithDetailsSchema>;
+
 export type EventInputDTO = z.infer<typeof eventInputSchema>;
 export type EventResponseDTO = z.infer<typeof eventResponseSchema>;

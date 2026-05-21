@@ -1,4 +1,10 @@
-import { createRootRoute, createRoute, createRouter, Outlet, redirect } from '@tanstack/react-router';
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+  redirect,
+} from '@tanstack/react-router';
 import { Toaster } from 'sonner';
 import Login from '../components/login';
 import { authClient } from '../lib/auth-client';
@@ -14,10 +20,10 @@ import AdminEmployees from '../pages/admin/Employees';
 // Root Layout Component
 function RootLayout() {
   return (
-    <div className="min-h-screen bg-background font-sans antialiased text-foreground">
+    <div className="bg-background text-foreground min-h-screen font-sans antialiased">
       <Toaster position="top-right" richColors />
       <Header />
-      <main className="container mx-auto max-w-7xl py-10 px-4 sm:px-6 lg:px-8">
+      <main className="container mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <Outlet />
       </main>
     </div>

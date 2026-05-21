@@ -1,16 +1,16 @@
-import type { EventResponseDTO } from '../../schemas';
+import type { EventInputDTO, EventWithDetailsType } from '../../schemas';
 import apiClient from '../lib/api-client';
 
 export const eventService = {
   getPublicEvents: async (start: string, end: string) => {
-    const { data } = await apiClient.get<EventResponseDTO[]>('/events', {
+    const { data } = await apiClient.get<EventWithDetailsType[]>('/events', {
       params: { start, end },
     });
     return data;
   },
   getAdminEvents: async (start: string, end: string) => {
-    const { data } = await apiClient.get<EventResponseDTO[]>(
-      '/admin/calendar',
+    const { data } = await apiClient.get<EventWithDetailsType[]>(
+      '/admin/events',
       {
         params: { start, end },
       },
@@ -18,26 +18,26 @@ export const eventService = {
     return data;
   },
   getById: async (id: string) => {
-    const { data } = await apiClient.get<EventResponseDTO>(
-      `/admin/calendar/${id}`,
+    const { data } = await apiClient.get<EventWithDetailsType>(
+      `/admin/events/${id}`,
     );
     return data;
   },
-  create: async (event: Omit<Event, 'id'>) => {
-    const { data } = await apiClient.post<EventResponseDTO>(
-      '/admin/calendar',
+  create: async (event: EventInputDTO) => {
+    const { data } = await apiClient.post<EventWithDetailsType>(
+      '/admin/events',
       event,
     );
     return data;
   },
-  update: async (id: string, event: Partial<Event>) => {
-    const { data } = await apiClient.put<EventResponseDTO>(
-      `/admin/calendar/${id}`,
+  update: async (id: string, event: EventInputDTO) => {
+    const { data } = await apiClient.put<EventWithDetailsType>(
+      `/admin/events/${id}`,
       event,
     );
     return data;
   },
   delete: async (id: string) => {
-    await apiClient.delete(`/admin/calendar/${id}`);
+    await apiClient.delete(`/admin/events/${id}`);
   },
 };

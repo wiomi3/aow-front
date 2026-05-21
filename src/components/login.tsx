@@ -1,7 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import { z } from 'zod';
+import { toast } from 'sonner';
 import { signIn } from '../lib/auth-client';
+import { Input } from '@/components/ui/input';
 
 const loginSchema = z.object({
   email: z.email('Некорректный адрес почты'),
@@ -31,17 +33,17 @@ export default function Login() {
     });
 
     if (signInError) {
-      alert(signInError.message || 'Неверная почта или пароль');
+      toast.error(signInError.message || 'Неверная почта или пароль');
     }
   };
 
   return (
-    <div className="mx-auto flex max-w-sm flex-col gap-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-2xl transition-all hover:shadow-blue-100/50">
+    <div className="mx-auto flex max-w-sm flex-col gap-6 rounded-2xl border border-border bg-card p-8 shadow-2xl transition-all hover:shadow-primary/20">
       <div className="text-center">
-        <h2 className="text-3xl font-black tracking-tight text-gray-900">
+        <h2 className="text-3xl font-black tracking-tight text-foreground">
           Вход
         </h2>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-muted-foreground">
           Доступ к управлению календарем
         </p>
       </div>
@@ -50,21 +52,19 @@ export default function Login() {
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="email"
-            className="ml-1 text-xs font-bold tracking-wider text-gray-400 uppercase"
+            className="ml-1 text-xs font-bold tracking-wider text-muted-foreground uppercase"
           >
             Электронная почта
           </label>
-          <input
+          <Input
             id="email"
             type="email"
             {...register('email')}
-            className={`w-full rounded-xl border ${
-              errors.email ? 'border-red-500' : 'border-gray-200'
-            } bg-gray-50 px-4 py-3 transition-all outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100`}
             placeholder="name@example.com"
+            className={errors.email ? 'border-destructive' : ''}
           />
           {errors.email && (
-            <p className="ml-1 text-xs font-medium text-red-500">
+            <p className="ml-1 text-xs font-medium text-destructive">
               {errors.email.message}
             </p>
           )}
@@ -73,21 +73,19 @@ export default function Login() {
         <div className="flex flex-col gap-1.5">
           <label
             htmlFor="password"
-            className="ml-1 flex justify-between text-xs font-bold tracking-wider text-gray-400 uppercase"
+            className="ml-1 flex justify-between text-xs font-bold tracking-wider text-muted-foreground uppercase"
           >
             Пароль
           </label>
-          <input
+          <Input
             id="password"
             type="password"
             {...register('password')}
-            className={`w-full rounded-xl border ${
-              errors.password ? 'border-red-500' : 'border-gray-200'
-            } bg-gray-50 px-4 py-3 transition-all outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100`}
             placeholder="••••••••"
+            className={errors.password ? 'border-destructive' : ''}
           />
           {errors.password && (
-            <p className="ml-1 text-xs font-medium text-red-500">
+            <p className="ml-1 text-xs font-medium text-destructive">
               {errors.password.message}
             </p>
           )}
@@ -96,12 +94,12 @@ export default function Login() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 w-full rounded-xl bg-blue-600 py-4 font-bold text-white shadow-xl shadow-blue-200 transition-all hover:-translate-y-0.5 hover:bg-blue-700 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
+          className="mt-2 w-full rounded-xl bg-primary py-4 font-bold text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:-translate-y-0.5 hover:bg-primary/90 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting ? (
             <span className="flex items-center justify-center gap-3">
               <svg
-                className="h-5 w-5 animate-spin text-white"
+                className="h-5 w-5 animate-spin text-primary-foreground"
                 viewBox="0 0 24 24"
               >
                 <circle
