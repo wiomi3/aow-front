@@ -121,7 +121,7 @@ function DateTimePicker({
           <Calendar
             mode="single"
             selected={isValidDate ? dateObj : undefined}
-            onSelect={handleDateSelect}
+            onSelect={(date) => handleDateSelect(date as Date | undefined)}
             initialFocus
             locale={ru}
           />
