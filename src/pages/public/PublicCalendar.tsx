@@ -380,6 +380,20 @@ export default function PublicCalendar() {
                       </div>
                     </div>
                   )}
+                {selectedEvent.additionalOrgs &&
+                  selectedEvent.additionalOrgs.length > 0 && (
+                    <div className="flex items-start gap-3">
+                      <div className="bg-chart-4 mt-1 h-2 w-2 shrink-0 rounded-full" />
+                      <div>
+                        <p className="text-foreground font-bold">Организации</p>
+                        <ul className="text-muted-foreground space-y-1">
+                          {selectedEvent.additionalOrgs.map((org) => (
+                            <li key={org.id}>{org.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
                 {selectedEvent.description && (
                   <div className="border-border mt-4 border-t pt-2">
                     <p className="text-foreground mb-1 font-bold">Описание</p>

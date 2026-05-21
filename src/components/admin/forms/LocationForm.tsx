@@ -9,7 +9,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { type Location } from '@/services/locations';
-import { locationInputSchema, type LocationInputDTO } from '../../../../schemas';
+import {
+  locationInputSchema,
+  type LocationInputDTO,
+} from '../../../../schemas';
 
 interface LocationFormProps {
   initialData?: Location;

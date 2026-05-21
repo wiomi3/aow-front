@@ -16,6 +16,7 @@ import AdminCalendar from '../pages/admin/Calendar';
 import AdminLocations from '../pages/admin/Locations';
 import AdminEventTypes from '../pages/admin/EventTypes';
 import AdminEmployees from '../pages/admin/Employees';
+import AdminAdditionalOrgs from '../pages/admin/AdditionalOrgs';
 
 // Root Layout Component
 function RootLayout() {
@@ -99,6 +100,12 @@ const adminEmployeesRoute = createRoute({
   component: AdminEmployees,
 });
 
+const adminAdditionalOrgsRoute = createRoute({
+  getParentRoute: () => adminRoute,
+  path: 'additional-orgs',
+  component: AdminAdditionalOrgs,
+});
+
 // Route Tree
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -109,6 +116,7 @@ const routeTree = rootRoute.addChildren([
     adminLocationsRoute,
     adminEventTypesRoute,
     adminEmployeesRoute,
+    adminAdditionalOrgsRoute,
   ]),
 ]);
 

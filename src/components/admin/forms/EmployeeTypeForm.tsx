@@ -9,7 +9,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { type EmployeeType } from '@/services/employee-types';
-import { employeeTypeInputSchema, type EmployeeTypeInputDTO } from '../../../../schemas';
+import {
+  employeeTypeInputSchema,
+  type EmployeeTypeInputDTO,
+} from '../../../../schemas';
 
 interface EmployeeTypeFormProps {
   initialData?: EmployeeType;

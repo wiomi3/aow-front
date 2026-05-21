@@ -36,6 +36,7 @@ import type {
 } from '../../../../schemas';
 import type { Location } from '@/services/locations';
 import type { Employee } from '@/services/employees';
+import type { AdditionalOrg } from '@/services/additional-orgs';
 
 const eventFormSchema = z
   .object({
@@ -51,6 +52,7 @@ const eventFormSchema = z
     employeeIds: z
       .array(z.string())
       .min(1, 'Назначьте хотя бы одного сотрудника'),
+    additionalOrgIds: z.array(z.string()).optional(),
   })
   .refine(
     (data) =>
@@ -70,6 +72,7 @@ interface EventFormProps {
   eventTypes: EventTypeResponseDTO[];
   locations: Location[];
   employees: Employee[];
+  additionalOrgs: AdditionalOrg[];
   onSubmit: (data: EventInputDTO) => void;
   isLoading?: boolean;
   defaultDate?: string;
@@ -158,6 +161,7 @@ export function EventForm({
   eventTypes,
   locations,
   employees,
+  additionalOrgs,
   onSubmit,
   isLoading,
   defaultDate,
@@ -186,6 +190,7 @@ export function EventForm({
       typeId: initialData?.typeId ?? '',
       locationId: initialData?.locationId ?? '',
       employeeIds: initialData?.employees?.map((e) => e.id) ?? [],
+      additionalOrgIds: initialData?.additionalOrgs?.map((o) => o.id) ?? [],
     },
   });
 
@@ -198,6 +203,7 @@ export function EventForm({
       typeId: values.typeId,
       locationId: values.locationId || null,
       employeeIds: values.employeeIds,
+      additionalOrgIds: values.additionalOrgIds,
     });
   };
 
@@ -381,6 +387,54 @@ export function EventForm({
               {errors.employeeIds.message}
             </p>
           )}
+        </FieldContent>
+      </Field>
+
+      <Field>
+        <FieldLabel>Сторонние организации</FieldLabel>
+        <FieldContent>
+          <Controller
+            name="additionalOrgIds"
+            control={control}
+            render={({ field }) => (
+              <div className="border-border max-h-40 space-y-2 overflow-y-auto rounded-lg border p-3">
+                {additionalOrgs.length === 0 ? (
+                  <p className="text-muted-foreground text-sm">
+                    Нет доступных организаций
+                  </p>
+                ) : (
+                  additionalOrgs.map((org) => {
+                    const checked = field.value?.includes(org.id);
+                    return (
+                      <div key={org.id} className="flex items-center gap-2">
+                        <Checkbox
+                          id={`org-${org.id}`}
+                          checked={checked}
+                          onCheckedChange={(c) => {
+                            const current = field.value || [];
+                            if (c) {
+                              field.onChange([...current, org.id]);
+                            } else {
+                              field.onChange(
+                                current.filter((id: string) => id !== org.id),
+                              );
+                            }
+                          }}
+                          disabled={isLoading}
+                        />
+                        <Label
+                          htmlFor={`org-${org.id}`}
+                          className="cursor-pointer text-sm font-normal"
+                        >
+                          {org.name}
+                        </Label>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+          />
         </FieldContent>
       </Field>
 

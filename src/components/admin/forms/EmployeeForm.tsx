@@ -17,7 +17,10 @@ import {
 } from '@/components/ui/select';
 import { type Employee } from '@/services/employees';
 import { type EmployeeType } from '@/services/employee-types';
-import { employeeInputSchema, type EmployeeInputDTO } from '../../../../schemas';
+import {
+  employeeInputSchema,
+  type EmployeeInputDTO,
+} from '../../../../schemas';
 
 interface EmployeeFormProps {
   initialData?: Employee;

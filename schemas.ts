@@ -19,6 +19,9 @@ export type EmployeeTypeResponseDTO = z.infer<
   typeof employeeTypeResponseSchema
 >;
 
+// Alias for compatibility with existing routes
+export const EmployeeTypeSchema = employeeTypeResponseSchema;
+
 // ==========================================
 // 2. Employee (Сотрудник)
 // ==========================================
@@ -32,15 +35,24 @@ export const employeeResponseSchema = employeeInputSchema.extend({
   id: z.string().uuid(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-  // Опционально: можно добавить вложенный тип, если сервер будет возвращать его через include: { employeeType: true }
-  // employeeType: employeeTypeResponseSchema.optional(),
+  employeeType: employeeTypeResponseSchema.optional(),
+});
+
+export const employeeWithDetailsResponseSchema = employeeResponseSchema.extend({
+  employeeType: employeeTypeResponseSchema,
 });
 
 export type EmployeeInputDTO = z.infer<typeof employeeInputSchema>;
 export type EmployeeResponseDTO = z.infer<typeof employeeResponseSchema>;
+export type EmployeeWithDetailsResponseDTO = z.infer<
+  typeof employeeWithDetailsResponseSchema
+>;
+
+// Alias for compatibility with existing routes
+export const EmployeeSchema = employeeResponseSchema;
 
 // ==========================================
-// 3. EventType (Тип мероприятия)
+// 3. EventType (Тип события)
 // ==========================================
 
 export const eventTypeInputSchema = z.object({
@@ -62,6 +74,9 @@ export const eventTypeResponseSchema = eventTypeInputSchema.extend({
 export type EventTypeInputDTO = z.infer<typeof eventTypeInputSchema>;
 export type EventTypeResponseDTO = z.infer<typeof eventTypeResponseSchema>;
 
+// Alias for compatibility with existing routes
+export const EventTypeSchema = eventTypeResponseSchema;
+
 // ==========================================
 // 4. Location (Площадка/Локация)
 // ==========================================
@@ -80,26 +95,62 @@ export const locationResponseSchema = locationInputSchema.extend({
 export type LocationInputDTO = z.infer<typeof locationInputSchema>;
 export type LocationResponseDTO = z.infer<typeof locationResponseSchema>;
 
+// Alias for compatibility with existing routes
+export const LocationSchema = locationResponseSchema;
+
 // ==========================================
-// 5. Event (Событие)
+// 5. AdditionalOrgs (Сторонние организации)
+// ==========================================
+
+export const additionalOrgInputSchema = z.object({
+  name: z.string().min(2, 'Название организации обязательно').trim(),
+  phone: z
+    .string()
+    .regex(
+      /^\+7 \d{3}-\d{3}-\d{2}-\d{2}$/,
+      'Формат телефона: +7 xxx-xxx-xx-xx',
+    ),
+  contactName: z.string().min(2, 'Укажите имя контакта').trim(),
+});
+
+export const additionalOrgResponseSchema = additionalOrgInputSchema.extend({
+  id: z.string().uuid(),
+  createdAt: z.iso.datetime(),
+  updatedAt: z.iso.datetime(),
+});
+
+export type AdditionalOrgInputDTO = z.infer<typeof additionalOrgInputSchema>;
+export type AdditionalOrgResponseDTO = z.infer<
+  typeof additionalOrgResponseSchema
+>;
+
+export const AdditionalOrgSchema = additionalOrgResponseSchema;
+
+// ==========================================
+// 6. Event (Событие)
 // ==========================================
 
 export const eventInputSchema = z
   .object({
-    title: z.string().min(3, 'Название мероприятия обязательно').trim(),
+    title: z.string().min(3, 'Название события обязательно').trim(),
+
     description: z.string().nullable().optional(),
+
     startAt: z.iso.datetime({
       message: 'Ожидается валидная дата начала (ISO 8601)',
     }),
     endAt: z.iso.datetime({
       message: 'Ожидается валидная дата окончания (ISO 8601)',
     }),
-    typeId: z.string().uuid('Выберите тип мероприятия'),
+    typeId: z.string().uuid('Выберите тип события'),
     locationId: z.string().uuid('Выберите локацию').nullable().optional(),
-    // Для связи "Многие-ко-Многим" (сотрудники на мероприятии) передаем массив ID
     employeeIds: z
       .array(z.string().uuid('Некорректный ID сотрудника'))
-      .min(1, 'Назначьте как минимум одного сотрудника'),
+      .min(1, 'Назначьте как минимум одного сотрудника')
+      .optional(),
+    additionalOrgIds: z
+      .array(z.string().uuid('Некорректный ID организации'))
+      .optional(),
   })
   .refine(
     (data) => {
@@ -108,9 +159,8 @@ export const eventInputSchema = z
       return end > start;
     },
     {
-      message:
-        'Дата окончания мероприятия должна быть строго позже даты начала',
-      path: ['endAt'], // Эта ошибка автоматически привяжется к полю endAt в react-hook-form
+      message: 'Дата окончания события должна быть строго позже даты начала',
+      path: ['endAt'],
     },
   );
 
@@ -124,30 +174,27 @@ export const eventResponseSchema = z.object({
   locationId: z.string().uuid().nullable(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-  // При GET-запросах (когда нужен include связанных данных для отрисовки карточек)
   type: eventTypeResponseSchema.optional(),
   location: locationResponseSchema.nullable().optional(),
   employees: z.array(employeeResponseSchema).optional(),
+  additionalOrgs: z.array(additionalOrgResponseSchema).optional(),
 });
-
-export const employeeWithDetailsResponseSchema = employeeResponseSchema.extend({
-  employeeType: employeeTypeResponseSchema,
-});
-
-export type EmployeeWithDetailsResponseDTO = z.infer<
-  typeof employeeWithDetailsResponseSchema
->;
 
 export const eventWithDetailsResponseSchema = eventResponseSchema.extend({
   type: eventTypeResponseSchema,
   location: locationResponseSchema.nullable(),
   employees: z.array(employeeWithDetailsResponseSchema),
+  additionalOrgs: z.array(additionalOrgResponseSchema),
 });
-export type EventWithDetailsResponseDTO = z.infer<
-  typeof eventWithDetailsResponseSchema
->;
-export const EventWithDetailsSchema = eventWithDetailsResponseSchema;
-export type EventWithDetailsType = z.infer<typeof EventWithDetailsSchema>;
 
 export type EventInputDTO = z.infer<typeof eventInputSchema>;
 export type EventResponseDTO = z.infer<typeof eventResponseSchema>;
+export type EventWithDetailsResponseDTO = z.infer<
+  typeof eventWithDetailsResponseSchema
+>;
+
+export type EventWithDetailsType = EventWithDetailsResponseDTO;
+
+// Alias for compatibility with existing routes
+export const EventSchema = eventResponseSchema;
+export const EventWithDetailsSchema = eventWithDetailsResponseSchema;

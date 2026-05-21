@@ -14,6 +14,7 @@ import { eventService } from '@/services/events';
 import { eventTypeService } from '@/services/event-types';
 import { locationService } from '@/services/locations';
 import { employeeService } from '@/services/employees';
+import { additionalOrgService } from '@/services/additional-orgs';
 import { EventForm } from '@/components/admin/forms/EventForm';
 import { toast } from 'sonner';
 import { MONTHS_RU, DAYS_OF_WEEK, eventFallsOnDay } from '@/lib/calendar-utils';
@@ -69,6 +70,11 @@ export default function AdminCalendar() {
   const { data: employees = [] } = useQuery({
     queryKey: ['employees'],
     queryFn: employeeService.getAll,
+  });
+
+  const { data: additionalOrgs = [] } = useQuery({
+    queryKey: ['additional-orgs'],
+    queryFn: additionalOrgService.getAll,
   });
 
   // Filtered events for the whole month
@@ -221,7 +227,7 @@ export default function AdminCalendar() {
           }}
           className="shadow-primary/20 gap-2 rounded-xl font-bold shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0"
         >
-          <Plus className="h-4 w-4" /> Добавить событие
+          <Plus className="h-4 w-4" /> Добавить мероприятие
         </Button>
       </div>
 
@@ -432,6 +438,7 @@ export default function AdminCalendar() {
             eventTypes={eventTypes}
             locations={locations}
             employees={employees}
+            additionalOrgs={additionalOrgs}
             onSubmit={handleSubmit}
             isLoading={isLoading}
             defaultDate={defaultDateStr}
