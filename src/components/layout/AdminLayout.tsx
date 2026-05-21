@@ -12,7 +12,7 @@ export function AdminLayout() {
             to="/admin/calendar"
             className="hover:bg-background [&.active]:bg-background [&.active]:text-primary rounded-md px-3 py-1.5 text-xs font-bold transition-all hover:shadow-sm [&.active]:shadow-sm"
           >
-            Календарь
+            Календарь мероприятий
           </Link>
           <Link
             to="/admin/locations"
@@ -24,7 +24,7 @@ export function AdminLayout() {
             to="/admin/event-types"
             className="hover:bg-background [&.active]:bg-background [&.active]:text-primary rounded-md px-3 py-1.5 text-xs font-bold transition-all hover:shadow-sm [&.active]:shadow-sm"
           >
-            Типы
+            Типы мероприятий
           </Link>
           <Link
             to="/admin/employees"

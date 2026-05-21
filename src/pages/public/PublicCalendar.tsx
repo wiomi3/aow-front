@@ -214,7 +214,7 @@ export default function PublicCalendar() {
         {isEventsError && (
           <div className="flex h-40 items-center justify-center">
             <p className="text-destructive text-sm">
-              Не удалось загрузить события. Попробуйте обновить страницу.
+              Не удалось загрузить мероприятия. Попробуйте обновить страницу.
             </p>
           </div>
         )}
@@ -295,7 +295,7 @@ export default function PublicCalendar() {
         filteredEvents.length === 0 && (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <p className="text-muted-foreground text-sm">
-              Нет событий, соответствующих фильтрам.
+              Нет мероприятий, соответствующих фильтрам.
             </p>
             <button
               onClick={clearFilters}

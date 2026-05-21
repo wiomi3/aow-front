@@ -42,7 +42,7 @@ export default function AdminDashboard() {
 
   const stats = [
     {
-      title: 'События',
+      title: 'мероприятия',
       value: events.length.toString(),
       icon: Calendar,
       description: 'Запланировано на этот месяц',
@@ -54,7 +54,7 @@ export default function AdminDashboard() {
       description: 'Активные локации',
     },
     {
-      title: 'Типы событий',
+      title: 'Типы мероприятий',
       value: eventTypes.length.toString(),
       icon: Tag,
       description: 'Категории мероприятий',

@@ -35,7 +35,9 @@ export default function AdminEmployees() {
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [editingType, setEditingType] = useState<EmployeeType | null>(null);
   const [employeeToDelete, setEmployeeToDelete] = useState<string | null>(null);
-  const [employeeTypeToDelete, setEmployeeTypeToDelete] = useState<string | null>(null);
+  const [employeeTypeToDelete, setEmployeeTypeToDelete] = useState<
+    string | null
+  >(null);
 
   const { data: employees = [], isLoading: isLoadingEmployees } = useQuery({
     queryKey: ['employees'],
@@ -167,10 +169,12 @@ export default function AdminEmployees() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">
+          <h2 className="text-foreground text-3xl font-black tracking-tight">
             Персонал
           </h2>
-          <p className="text-muted-foreground">Управление сотрудниками и их ролями.</p>
+          <p className="text-muted-foreground">
+            Управление сотрудниками и их типами.
+          </p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -182,7 +186,7 @@ export default function AdminEmployees() {
           </Button>
           <Button
             onClick={handleAddEmployee}
-            className="gap-2 rounded-xl font-bold shadow-xl shadow-primary/20"
+            className="shadow-primary/20 gap-2 rounded-xl font-bold shadow-xl"
           >
             <Plus className="h-4 w-4" /> Добавить сотрудника
           </Button>
@@ -254,16 +258,16 @@ export default function AdminEmployees() {
       </Dialog>
 
       <Tabs defaultValue="employees" className="space-y-4">
-        <TabsList className="rounded-xl bg-muted p-1">
+        <TabsList className="bg-muted rounded-xl p-1">
           <TabsTrigger
             value="employees"
-            className="rounded-lg px-4 py-2 font-bold data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm"
+            className="data-[state=active]:bg-card data-[state=active]:text-primary rounded-lg px-4 py-2 font-bold data-[state=active]:shadow-sm"
           >
             Сотрудники
           </TabsTrigger>
           <TabsTrigger
             value="types"
-            className="rounded-lg px-4 py-2 font-bold data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm"
+            className="data-[state=active]:bg-card data-[state=active]:text-primary rounded-lg px-4 py-2 font-bold data-[state=active]:shadow-sm"
           >
             Типы
           </TabsTrigger>
@@ -271,7 +275,7 @@ export default function AdminEmployees() {
 
         <TabsContent
           value="employees"
-          className="overflow-hidden rounded-2xl border bg-card shadow-sm"
+          className="bg-card overflow-hidden rounded-2xl border shadow-sm"
         >
           <Table>
             <TableHeader className="bg-muted/50">
@@ -305,18 +309,18 @@ export default function AdminEmployees() {
                 employees.map((emp) => (
                   <TableRow
                     key={emp.id}
-                    className="transition-colors hover:bg-muted/50"
+                    className="hover:bg-muted/50 transition-colors"
                   >
                     <TableCell>
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10">
-                        <User className="h-4 w-4 text-primary" />
+                      <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+                        <User className="text-primary h-4 w-4" />
                       </div>
                     </TableCell>
-                    <TableCell className="font-bold text-foreground">
+                    <TableCell className="text-foreground font-bold">
                       {emp.name}
                     </TableCell>
                     <TableCell>
-                      <span className="rounded-md bg-muted px-2 py-1 text-xs font-bold text-muted-foreground uppercase">
+                      <span className="bg-muted text-muted-foreground rounded-md px-2 py-1 text-xs font-bold uppercase">
                         {employeeTypes.find((t) => t.id === emp.employeeTypeId)
                           ?.name || 'Неизвестно'}
                       </span>
@@ -327,7 +331,7 @@ export default function AdminEmployees() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleEditEmployee(emp)}
-                          className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
+                          className="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-lg"
                         >
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
@@ -335,7 +339,7 @@ export default function AdminEmployees() {
                           variant="ghost"
                           size="icon"
                           onClick={() => setEmployeeToDelete(emp.id)}
-                          className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                          className="hover:bg-destructive/10 hover:text-destructive h-8 w-8 rounded-lg"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>
@@ -350,7 +354,7 @@ export default function AdminEmployees() {
 
         <TabsContent
           value="types"
-          className="overflow-hidden rounded-2xl border bg-card shadow-sm"
+          className="bg-card overflow-hidden rounded-2xl border shadow-sm"
         >
           <Table>
             <TableHeader className="bg-muted/50">
@@ -381,12 +385,12 @@ export default function AdminEmployees() {
                 employeeTypes.map((type) => (
                   <TableRow
                     key={type.id}
-                    className="transition-colors hover:bg-muted/50"
+                    className="hover:bg-muted/50 transition-colors"
                   >
                     <TableCell>
-                      <Users className="h-4 w-4 text-muted-foreground" />
+                      <Users className="text-muted-foreground h-4 w-4" />
                     </TableCell>
-                    <TableCell className="font-bold text-foreground">
+                    <TableCell className="text-foreground font-bold">
                       {type.name}
                     </TableCell>
                     <TableCell className="text-right">
@@ -395,7 +399,7 @@ export default function AdminEmployees() {
                           variant="ghost"
                           size="icon"
                           onClick={() => handleEditType(type)}
-                          className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
+                          className="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-lg"
                         >
                           <Edit2 className="h-3.5 w-3.5" />
                         </Button>
@@ -403,7 +407,7 @@ export default function AdminEmployees() {
                           variant="ghost"
                           size="icon"
                           onClick={() => setEmployeeTypeToDelete(type.id)}
-                          className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                          className="hover:bg-destructive/10 hover:text-destructive h-8 w-8 rounded-lg"
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                         </Button>

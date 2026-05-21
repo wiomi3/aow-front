@@ -39,11 +39,11 @@ export default function AdminEventTypes() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event-types'] });
       setIsDialogOpen(false);
-      toast.success('Тип события создан');
+      toast.success('Тип мероприятия создан');
     },
     onError: (err) => {
       console.error(err);
-      toast.error('Ошибка при создании типа события');
+      toast.error('Ошибка при создании типа мероприятия');
     },
   });
 
@@ -54,11 +54,11 @@ export default function AdminEventTypes() {
       queryClient.invalidateQueries({ queryKey: ['event-types'] });
       setIsDialogOpen(false);
       setEditingType(null);
-      toast.success('Тип события обновлен');
+      toast.success('Тип мероприятия обновлен');
     },
     onError: (err) => {
       console.error(err);
-      toast.error('Ошибка при обновлении типа события');
+      toast.error('Ошибка при обновлении типа мероприятия');
     },
   });
 
@@ -66,11 +66,11 @@ export default function AdminEventTypes() {
     mutationFn: eventTypeService.delete,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['event-types'] });
-      toast.success('Тип события удален');
+      toast.success('Тип мероприятия удален');
     },
     onError: (err) => {
       console.error(err);
-      toast.error('Ошибка при удалении типа события');
+      toast.error('Ошибка при удалении типа мероприятия');
     },
   });
 
@@ -107,8 +107,8 @@ export default function AdminEventTypes() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">
-            Типы событий
+          <h2 className="text-foreground text-3xl font-black tracking-tight">
+            Типы мероприятий
           </h2>
           <p className="text-muted-foreground">
             Категории и цветовое кодирование для календаря.
@@ -116,7 +116,7 @@ export default function AdminEventTypes() {
         </div>
         <Button
           onClick={handleAdd}
-          className="gap-2 rounded-xl font-bold shadow-xl shadow-primary/20"
+          className="shadow-primary/20 gap-2 rounded-xl font-bold shadow-xl"
         >
           <Plus className="h-4 w-4" /> Добавить тип
         </Button>
@@ -133,8 +133,8 @@ export default function AdminEventTypes() {
           <DialogHeader>
             <DialogTitle>
               {editingType
-                ? 'Редактировать тип события'
-                : 'Добавить тип события'}
+                ? 'Редактировать тип мероприятия'
+                : 'Добавить тип мероприятия'}
             </DialogTitle>
           </DialogHeader>
           <EventTypeForm
@@ -145,7 +145,7 @@ export default function AdminEventTypes() {
         </DialogContent>
       </Dialog>
 
-      <div className="overflow-hidden rounded-2xl border bg-card shadow-sm">
+      <div className="bg-card overflow-hidden rounded-2xl border shadow-sm">
         <Table>
           <TableHeader className="bg-muted/50">
             <TableRow>
@@ -178,10 +178,10 @@ export default function AdminEventTypes() {
               types.map((type) => (
                 <TableRow
                   key={type.id}
-                  className="transition-colors hover:bg-muted/50"
+                  className="hover:bg-muted/50 transition-colors"
                 >
                   <TableCell>
-                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <Tag className="text-muted-foreground h-4 w-4" />
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -198,7 +198,7 @@ export default function AdminEventTypes() {
                         className="h-4 w-4 rounded-full shadow-sm"
                         style={{ backgroundColor: type.color }}
                       />
-                      <code className="text-xs text-muted-foreground uppercase">
+                      <code className="text-muted-foreground text-xs uppercase">
                         {type.color}
                       </code>
                     </div>
@@ -209,7 +209,7 @@ export default function AdminEventTypes() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleEdit(type)}
-                        className="h-8 w-8 rounded-lg hover:bg-primary/10 hover:text-primary"
+                        className="hover:bg-primary/10 hover:text-primary h-8 w-8 rounded-lg"
                       >
                         <Edit2 className="h-3.5 w-3.5" />
                       </Button>
@@ -217,7 +217,7 @@ export default function AdminEventTypes() {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(type.id)}
-                        className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                        className="hover:bg-destructive/10 hover:text-destructive h-8 w-8 rounded-lg"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
@@ -233,7 +233,7 @@ export default function AdminEventTypes() {
       <ConfirmDialog
         open={!!typeToDelete}
         onOpenChange={(open) => !open && setTypeToDelete(null)}
-        title="Удалить тип события?"
+        title="Удалить тип мероприятия?"
         onConfirm={confirmDelete}
         isPending={deleteMutation.isPending}
       />

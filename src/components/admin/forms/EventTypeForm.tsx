@@ -9,7 +9,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { type EventType } from '@/services/event-types';
-import { eventTypeInputSchema, type EventTypeInputDTO } from '../../../../schemas';
+import {
+  eventTypeInputSchema,
+  type EventTypeInputDTO,
+} from '../../../../schemas';
 
 interface EventTypeFormProps {
   initialData?: EventType;
@@ -45,7 +48,7 @@ export function EventTypeForm({
         <FieldContent>
           <Input
             {...register('name')}
-            placeholder="Введите название типа события"
+            placeholder="Введите название типа мероприятия"
             disabled={isLoading}
           />
           <FieldError errors={[errors.name]} />
@@ -76,7 +79,7 @@ export function EventTypeForm({
 
       <div className="flex justify-end pt-4">
         <Button type="submit" disabled={isLoading}>
-          {initialData ? 'Сохранить изменения' : 'Создать тип события'}
+          {initialData ? 'Сохранить изменения' : 'Создать тип мероприятия'}
         </Button>
       </div>
     </form>

@@ -40,7 +40,7 @@ export type EmployeeInputDTO = z.infer<typeof employeeInputSchema>;
 export type EmployeeResponseDTO = z.infer<typeof employeeResponseSchema>;
 
 // ==========================================
-// 3. EventType (Тип события)
+// 3. EventType (Тип мероприятия)
 // ==========================================
 
 export const eventTypeInputSchema = z.object({
@@ -86,7 +86,7 @@ export type LocationResponseDTO = z.infer<typeof locationResponseSchema>;
 
 export const eventInputSchema = z
   .object({
-    title: z.string().min(3, 'Название события обязательно').trim(),
+    title: z.string().min(3, 'Название мероприятия обязательно').trim(),
     description: z.string().nullable().optional(),
     startAt: z.iso.datetime({
       message: 'Ожидается валидная дата начала (ISO 8601)',
@@ -94,7 +94,7 @@ export const eventInputSchema = z
     endAt: z.iso.datetime({
       message: 'Ожидается валидная дата окончания (ISO 8601)',
     }),
-    typeId: z.string().uuid('Выберите тип события'),
+    typeId: z.string().uuid('Выберите тип мероприятия'),
     locationId: z.string().uuid('Выберите локацию').nullable().optional(),
     // Для связи "Многие-ко-Многим" (сотрудники на мероприятии) передаем массив ID
     employeeIds: z
@@ -108,7 +108,8 @@ export const eventInputSchema = z
       return end > start;
     },
     {
-      message: 'Дата окончания события должна быть строго позже даты начала',
+      message:
+        'Дата окончания мероприятия должна быть строго позже даты начала',
       path: ['endAt'], // Эта ошибка автоматически привяжется к полю endAt в react-hook-form
     },
   );

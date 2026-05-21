@@ -27,7 +27,9 @@ export default function AdminCalendar() {
     return new Date(now.getFullYear(), now.getMonth(), 1);
   });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<EventResponseDTO | null>(null);
+  const [editingEvent, setEditingEvent] = useState<EventResponseDTO | null>(
+    null,
+  );
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
   const [search, setSearch] = useState('');
@@ -84,7 +86,9 @@ export default function AdminCalendar() {
   const createMutation = useMutation({
     mutationFn: eventService.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-events', year, month] });
+      queryClient.invalidateQueries({
+        queryKey: ['admin-events', year, month],
+      });
       handleDialogClose();
       toast.success('Мероприятие создано');
     },
@@ -98,7 +102,9 @@ export default function AdminCalendar() {
     mutationFn: ({ id, data }: { id: string; data: EventInputDTO }) =>
       eventService.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-events', year, month] });
+      queryClient.invalidateQueries({
+        queryKey: ['admin-events', year, month],
+      });
       handleDialogClose();
       toast.success('Мероприятие обновлено');
     },
@@ -111,7 +117,9 @@ export default function AdminCalendar() {
   const deleteMutation = useMutation({
     mutationFn: eventService.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-events', year, month] });
+      queryClient.invalidateQueries({
+        queryKey: ['admin-events', year, month],
+      });
       handleDialogClose();
       toast.success('Мероприятие удалено');
     },
@@ -198,11 +206,11 @@ export default function AdminCalendar() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-black tracking-tight text-foreground">
+          <h2 className="text-foreground text-3xl font-black tracking-tight">
             Календарь мероприятий
           </h2>
           <p className="text-muted-foreground">
-            Управление расписанием и создание новых событий.
+            Управление расписанием и создание новых мероприятий.
           </p>
         </div>
         <Button
@@ -211,7 +219,7 @@ export default function AdminCalendar() {
             setSelectedDay(null);
             setIsDialogOpen(true);
           }}
-          className="gap-2 rounded-xl font-bold shadow-xl shadow-primary/20 transition-all hover:-translate-y-0.5 active:translate-y-0"
+          className="shadow-primary/20 gap-2 rounded-xl font-bold shadow-xl transition-all hover:-translate-y-0.5 active:translate-y-0"
         >
           <Plus className="h-4 w-4" /> Добавить событие
         </Button>
@@ -223,13 +231,13 @@ export default function AdminCalendar() {
           variant="ghost"
           size="icon"
           onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
-          className="rounded-xl hover:bg-muted"
+          className="hover:bg-muted rounded-xl"
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
 
         <div className="flex items-center gap-3">
-          <h3 className="text-xl font-bold text-foreground">
+          <h3 className="text-foreground text-xl font-bold">
             {MONTHS_RU[month]} {year}
           </h3>
           {!isCurrentMonth && (
@@ -238,7 +246,7 @@ export default function AdminCalendar() {
                 const now = new Date();
                 setCurrentMonth(new Date(now.getFullYear(), now.getMonth(), 1));
               }}
-              className="text-xs font-bold text-primary hover:underline"
+              className="text-primary text-xs font-bold hover:underline"
             >
               Сегодня
             </button>
@@ -249,7 +257,7 @@ export default function AdminCalendar() {
           variant="ghost"
           size="icon"
           onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
-          className="rounded-xl hover:bg-muted"
+          className="hover:bg-muted rounded-xl"
         >
           <ChevronRight className="h-5 w-5" />
         </Button>
@@ -258,7 +266,7 @@ export default function AdminCalendar() {
       {/* Search & Filters */}
       <div className="space-y-3">
         <div className="relative">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <Input
             placeholder="Поиск по названию..."
             value={search}
@@ -268,7 +276,7 @@ export default function AdminCalendar() {
           {search && (
             <button
               onClick={() => setSearch('')}
-              className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
             >
               <X className="h-4 w-4" />
             </button>
@@ -277,7 +285,7 @@ export default function AdminCalendar() {
 
         {eventTypes.length > 0 && (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs font-bold tracking-wider text-muted-foreground uppercase">
+            <span className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
               Фильтр:
             </span>
             {eventTypes.map((type) => {
@@ -292,7 +300,7 @@ export default function AdminCalendar() {
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold transition-all ${
                     isActive
                       ? 'text-white shadow-sm'
-                      : 'bg-transparent text-muted-foreground hover:text-foreground'
+                      : 'text-muted-foreground hover:text-foreground bg-transparent'
                   }`}
                   style={
                     isActive
@@ -311,7 +319,7 @@ export default function AdminCalendar() {
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
-                className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs transition-colors"
               >
                 <X className="h-3 w-3" />
                 Сбросить
@@ -322,17 +330,17 @@ export default function AdminCalendar() {
       </div>
 
       {/* Calendar Grid */}
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+      <div className="border-border bg-card relative overflow-hidden rounded-2xl border shadow-sm">
         {isLoadingEvents && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary" />
+          <div className="bg-background/50 absolute inset-0 z-10 flex items-center justify-center backdrop-blur-sm">
+            <div className="border-primary h-8 w-8 animate-spin rounded-full border-b-2" />
           </div>
         )}
 
         {isEventsError && (
           <div className="flex h-40 items-center justify-center">
-            <p className="text-sm text-destructive">
-              Не удалось загрузить события. Попробуйте обновить страницу.
+            <p className="text-destructive text-sm">
+              Не удалось загрузить мероприятия. Попробуйте обновить страницу.
             </p>
           </div>
         )}
@@ -340,11 +348,11 @@ export default function AdminCalendar() {
         {!isEventsError && (
           <>
             {/* Day headers */}
-            <div className="grid grid-cols-7 border-b border-border bg-muted/50">
+            <div className="border-border bg-muted/50 grid grid-cols-7 border-b">
               {DAYS_OF_WEEK.map((day) => (
                 <div
                   key={day}
-                  className="px-4 py-3 text-center text-xs font-bold tracking-widest text-muted-foreground uppercase"
+                  className="text-muted-foreground px-4 py-3 text-center text-xs font-bold tracking-widest uppercase"
                 >
                   {day}
                 </div>
@@ -355,7 +363,10 @@ export default function AdminCalendar() {
             <div className="grid auto-rows-[140px] grid-cols-7">
               {/* Empty offset cells */}
               {Array.from({ length: firstDayIndex }, (_, i) => (
-                <div key={`pad-${i}`} className="border-r border-b border-border bg-muted/30" />
+                <div
+                  key={`pad-${i}`}
+                  className="border-border bg-muted/30 border-r border-b"
+                />
               ))}
 
               {/* Day cells */}
@@ -371,7 +382,7 @@ export default function AdminCalendar() {
                   <div
                     key={day}
                     onClick={() => handleDayClick(day)}
-                    className="group relative cursor-pointer border-r border-b border-border p-2 transition-colors hover:bg-primary/5"
+                    className="group border-border hover:bg-primary/5 relative cursor-pointer border-r border-b p-2 transition-colors"
                   >
                     {/* Day number */}
                     <span
@@ -392,7 +403,8 @@ export default function AdminCalendar() {
                           onClick={(e) => handleEditEvent(event, e)}
                           className="flex cursor-pointer items-center gap-1 rounded px-1.5 py-0.5 text-[10px] leading-tight font-bold text-white transition-opacity hover:opacity-90"
                           style={{
-                            backgroundColor: event.type?.color ?? 'var(--primary)',
+                            backgroundColor:
+                              event.type?.color ?? 'var(--primary)',
                           }}
                         >
                           <span className="flex-1 truncate">{event.title}</span>

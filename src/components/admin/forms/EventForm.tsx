@@ -29,23 +29,38 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import type { EventTypeResponseDTO, EventInputDTO, EventResponseDTO } from '../../../../schemas';
+import type {
+  EventTypeResponseDTO,
+  EventInputDTO,
+  EventResponseDTO,
+} from '../../../../schemas';
 import type { Location } from '@/services/locations';
 import type { Employee } from '@/services/employees';
 
 const eventFormSchema = z
   .object({
-    title: z.string().min(3, 'Название должно содержать минимум 3 символа').trim(),
+    title: z
+      .string()
+      .min(3, 'Название должно содержать минимум 3 символа')
+      .trim(),
     description: z.string().optional(),
     startAt: z.string().min(1, 'Укажите дату начала'),
     endAt: z.string().min(1, 'Укажите дату окончания'),
-    typeId: z.string().min(1, 'Выберите тип события'),
+    typeId: z.string().min(1, 'Выберите тип мероприятия'),
     locationId: z.string().optional(),
-    employeeIds: z.array(z.string()).min(1, 'Назначьте хотя бы одного сотрудника'),
+    employeeIds: z
+      .array(z.string())
+      .min(1, 'Назначьте хотя бы одного сотрудника'),
   })
   .refine(
-    (data) => !data.startAt || !data.endAt || new Date(data.endAt) > new Date(data.startAt),
-    { message: 'Дата окончания должна быть позже даты начала', path: ['endAt'] },
+    (data) =>
+      !data.startAt ||
+      !data.endAt ||
+      new Date(data.endAt) > new Date(data.startAt),
+    {
+      message: 'Дата окончания должна быть позже даты начала',
+      path: ['endAt'],
+    },
   );
 
 type EventFormValues = z.infer<typeof eventFormSchema>;
@@ -83,7 +98,8 @@ function DateTimePicker({
   const handleDateSelect = (selectedDate: Date | undefined) => {
     if (!selectedDate) return;
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    const timeStr = value && value.includes('T') ? value.split('T')[1] : '00:00';
+    const timeStr =
+      value && value.includes('T') ? value.split('T')[1] : '00:00';
     onChange(`${dateStr}T${timeStr}`);
   };
 
@@ -105,7 +121,7 @@ function DateTimePicker({
             variant="outline"
             disabled={disabled}
             className={cn(
-              'flex-1 justify-start text-left font-normal px-3',
+              'flex-1 justify-start px-3 text-left font-normal',
               !value && 'text-muted-foreground',
             )}
           >
@@ -199,7 +215,7 @@ export function EventForm({
         </FieldContent>
       </Field>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field>
           <FieldLabel>Начало</FieldLabel>
           <FieldContent>
@@ -239,7 +255,7 @@ export function EventForm({
 
       <div className="grid grid-cols-2 gap-3">
         <Field>
-          <FieldLabel>Тип события</FieldLabel>
+          <FieldLabel>Тип мероприятия</FieldLabel>
           <FieldContent>
             <Controller
               name="typeId"
@@ -258,7 +274,7 @@ export function EventForm({
                       <SelectItem key={t.id} value={t.id}>
                         <div className="flex items-center gap-2">
                           <span
-                            className="h-2 w-2 rounded-full shrink-0"
+                            className="h-2 w-2 shrink-0 rounded-full"
                             style={{ backgroundColor: t.color }}
                           />
                           {t.name}
@@ -321,9 +337,11 @@ export function EventForm({
             name="employeeIds"
             control={control}
             render={({ field }) => (
-              <div className="max-h-40 overflow-y-auto rounded-lg border border-border p-3 space-y-2">
+              <div className="border-border max-h-40 space-y-2 overflow-y-auto rounded-lg border p-3">
                 {employees.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">Нет доступных сотрудников</p>
+                  <p className="text-muted-foreground text-sm">
+                    Нет доступных сотрудников
+                  </p>
                 ) : (
                   employees.map((emp) => {
                     const checked = field.value.includes(emp.id);
@@ -337,7 +355,9 @@ export function EventForm({
                               field.onChange([...field.value, emp.id]);
                             } else {
                               field.onChange(
-                                field.value.filter((id: string) => id !== emp.id),
+                                field.value.filter(
+                                  (id: string) => id !== emp.id,
+                                ),
                               );
                             }
                           }}
@@ -345,7 +365,7 @@ export function EventForm({
                         />
                         <Label
                           htmlFor={`emp-${emp.id}`}
-                          className="text-sm font-normal cursor-pointer"
+                          className="cursor-pointer text-sm font-normal"
                         >
                           {emp.name}
                         </Label>
@@ -357,14 +377,21 @@ export function EventForm({
             )}
           />
           {errors.employeeIds?.message && (
-            <p className="text-sm text-destructive">{errors.employeeIds.message}</p>
+            <p className="text-destructive text-sm">
+              {errors.employeeIds.message}
+            </p>
           )}
         </FieldContent>
       </Field>
 
       <div className="flex justify-between pt-4">
         {onDelete ? (
-          <Button type="button" variant="destructive" onClick={onDelete} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={onDelete}
+            disabled={isLoading}
+          >
             Удалить
           </Button>
         ) : (
