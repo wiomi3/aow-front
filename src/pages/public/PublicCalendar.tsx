@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ChevronLeft, ChevronRight, Search, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, X, User, Phone } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -386,9 +386,23 @@ export default function PublicCalendar() {
                       <div className="bg-chart-4 mt-1 h-2 w-2 shrink-0 rounded-full" />
                       <div>
                         <p className="text-foreground font-bold">Организации</p>
-                        <ul className="text-muted-foreground space-y-1">
+                        <ul className="text-muted-foreground space-y-3 mt-1">
                           {selectedEvent.additionalOrgs.map((org) => (
-                            <li key={org.id}>{org.name}</li>
+                            <li key={org.id} className="group">
+                              <div className="font-bold text-foreground">
+                                {org.name}
+                              </div>
+                              <div className="text-xs flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 opacity-80">
+                                <span className="flex items-center gap-1">
+                                  <User className="h-3 w-3" />
+                                  {org.contactName}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  <Phone className="h-3 w-3" />
+                                  {org.phone}
+                                </span>
+                              </div>
+                            </li>
                           ))}
                         </ul>
                       </div>

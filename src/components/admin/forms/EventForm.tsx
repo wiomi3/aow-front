@@ -424,9 +424,14 @@ export function EventForm({
                         />
                         <Label
                           htmlFor={`org-${org.id}`}
-                          className="cursor-pointer text-sm font-normal"
+                          className="flex cursor-pointer flex-col"
                         >
-                          {org.name}
+                          <span className="text-sm font-medium">
+                            {org.name}
+                          </span>
+                          <span className="text-muted-foreground text-xs">
+                            {org.contactName} • {org.phone}
+                          </span>
                         </Label>
                       </div>
                     );
